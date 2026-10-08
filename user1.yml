@@ -1,0 +1,49 @@
+---
+ - name: q 14
+   hosts: all
+   become: true
+   vars_files:
+     - locker.yml
+     - user_list.yml
+   tasks:
+     - name: create devops group
+       ansible.builtin.group:
+           name: devops1
+           state: present
+       when: ( inventory_hostname in groups ['dev'] or inventory_hostname in groups ['prod'])       
+
+     - name: create manager group
+       ansible.builtin.group:
+            name: opsmgr2
+            state: present
+       when: inventory_hostname in groups ['balancer'] 
+
+     - name: create user devops
+       ansible.builtin.user:
+          name: "{{item.username}}"
+          uid: "{{item.uid}}"
+          groups: devops1
+          append: yes
+          password: "{{ pw_developer | password_hash('sha512') }}"
+          state: present
+       loop: "{{ users }}"
+       when:
+         - ( inventory_hostname in groups ['dev'] or inventory_hostname in groups ['prod'])
+         - item.job == "developer"
+     - name: create user devops
+       ansible.builtin.user:
+          name: "{{item.username}}"
+          uid: "{{item.uid}}"
+          groups: opsmgr2
+          append: yes  
+          password: "{{ pw_manager | password_hash('sha512') }}"
+          state: present
+       loop: "{{ users }}"     
+       when: 
+         - inventory_hostname in groups['balancer']
+         - item.job == "manager"
+
+        
+
+
+

@@ -1,0 +1,13 @@
+users:
+ - username: developer8
+   uid: 3008
+   job: developer
+ - username: developer9
+   uid: 3009
+   job: developer
+ - username: manager8
+   uid: 4010
+   job: manager
+ - username: manager10
+   uid: 4011
+   job: manager
