@@ -1,0 +1,20 @@
+---
+ - name: issue file modification
+   hosts: all
+   become: true
+   tasks:
+     - name: devlopment
+       ansible.builtin.copy:
+         content: "devlopment08"
+         dest:  /etc/issue
+       when: inventory_hostname in groups['dev']
+     - name: prod
+       ansible.builtin.copy:
+           content: "production8"
+           dest: /etc/issue
+       when: inventory_hostname in groups['prod']
+     - name: balancer
+       ansible.builtin.copy:
+          content: "test8"
+          dest: /etc/issue
+       when: inventory_hostname in groups['balancer']     
