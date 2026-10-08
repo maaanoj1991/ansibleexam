@@ -1,0 +1,27 @@
+---
+ - name: q 12
+   hosts: dev
+   become: yes
+   tasks:
+     - name: group creation
+       ansible.builtin.group:
+          name: webdev
+          state: present
+     - name: directory creation
+       ansible.builtin.file:
+          path: /webdev8
+          group: webdev
+          mode: "2775"
+          state: directory
+          setype: httpd_sys_content_t  
+     - name: set soft link
+       ansible.builtin.file:
+         src: /webdev8
+         dest: /var/www/html/webdev
+         state: link
+     - name: create file index.html
+       ansible.builtin.copy:
+         dest: /webdev8/index.html
+         content: "Development8"
+         setype: httpd_sys_content_t
+               
