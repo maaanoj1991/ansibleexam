@@ -1,0 +1,41 @@
+---
+ - name: create lvm from vg
+   hosts: all
+   become: true
+   ignore_errors: yes
+   tasks:
+     - name: print message "vg not found"
+       ansible.builtin.debug:
+           msg: "vg not found"
+       when: ansible_facts.lvm.vgs.research is not defined    
+     - name: create 1500 MB lvm
+       community.general.lvol:
+           vg: research
+           lv: data
+           size: 1500M
+       when:  
+        - ansible_facts.lvm.vgs.research is defined
+        - ansible_facts.lvm.vgs.research.size_g | float >  1.5
+     - name: print message Insufficient size of vg
+       ansible.builtin.debug:
+           msg: "Insufficient size of vg" 
+
+       when:
+         -  ansible_facts.lvm.vgs.research is defined 
+         -  ansible_facts.lvm.vgs.research.size_g | float < 1.5  
+
+     - name: create 800 Lv
+       community.general.lvol:
+         vg: research
+         lv: data
+         size: 800M
+       when: 
+        - ansible_facts.lvm.vgs.research is defined 
+        - ansible_facts.lvm.vgs.research.size_g | float  < 1.5
+
+
+     - name: create file system
+       community.general.filesystem:
+          fstype: ext4
+          dev: /dev/research/data
+       when: ansible_facts.lvm.vgs.research is defined     
