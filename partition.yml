@@ -1,0 +1,54 @@
+---
+ - name: create partition q9
+   hosts: prod
+   become: true
+   tasks:
+     - name: get stat
+       ansible.builtin.stat:
+          path: /dev/sdb
+            
+       register: sdb_present
+         
+     - name: print Disk does not exist
+       ansible.builtin.debug:
+           msg: "Disk does not exist"
+             
+       when: sdb_present.stat.exists == false
+
+     - name: block time
+       block:
+         - name: create partition 1500 Mb 
+           community.general.parted:
+             device: /dev/sdb
+             number: 1
+             part_start: 1MiB
+             part_end: 1500MiB
+             label: gpt
+             state: present
+       rescue:
+         - name: print insufficient
+           ansible.builtin.debug:
+             msg: "Could not create partition of that size"
+         - name: create 800 Mb 
+           community.general.parted:
+              device: /dev/sdb
+              number: 1
+              part_start: 1MiB
+              part_end: 800Mib
+              label: gpt  
+              state: present   
+     - name:  create file system
+       community.general.filesystem:
+           dev: /dev/sdb1
+           fstype: ext4
+             
+     - name: create mount folder
+       ansible.builtin.file:
+         path: /mnt/siba
+         state: directory
+     - name: mount it
+       ansible.posix.mount:
+          path: /mnt/siba
+          src: /dev/sdb1
+          state: mounted
+          fstype: ext4  
