@@ -1,0 +1,17 @@
+---
+# tasks file for balancer
+- name: Install HAProxy
+  ansible.builtin.dnf:
+    name: haproxy
+    state: present
+
+- name: Copy configuration
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: Enable service
+  ansible.builtin.service:
+    name: haproxy
+    enabled: yes
+    state: started

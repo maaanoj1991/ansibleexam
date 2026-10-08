@@ -1,0 +1,19 @@
+---
+# tasks file for phpinfo
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - php
+      - httpd
+    state: latest
+
+- name: Create phpinfo page
+  ansible.builtin.template:
+    src: hello.php.j2
+    dest: /var/www/html/hello.php
+
+- name: Enable httpd
+  ansible.builtin.service:
+    name: httpd
+    enabled: yes
+    state: started
