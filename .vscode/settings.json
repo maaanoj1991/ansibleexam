@@ -1,0 +1,6 @@
+{
+    "ansible.executionEnvironment.enabled": true,
+    "ansible.executionEnvironment.containerEngine": "podman",
+    "ansible.executionEnvironment.pull.arguments": "–-tls-verify=false",
+    "ansible.executionEnvironment.image": "registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9:latest"
+}

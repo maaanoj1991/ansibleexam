@@ -1,0 +1,22 @@
+---
+ - name: q2 create repo
+   hosts: client1
+   become: true
+   tasks:
+     - name: create "EX24_BASE"
+       ansible.builtin.yum_repository:
+          name: EX24_BASE
+          description: "EX254 base software"
+          enabled: false
+          baseurl: http://thois.domain7.example.com/BaseOS   
+          gpgcheck: true
+          gpgkey: http://rhois.domain7.example.com/RHEL/RPM-GPG-KEYredhat-release   
+     - name: EX294_STREAK
+       ansible.builtin.yum_repository:
+           name: EX294_STREAK
+           description: EX294 stream software
+           baseurl: http://thois.domain7.example.com/AppStream
+           enabled: false
+           gpgcheck: true
+           gpgkey: http://thois.domain7.example.com/RHEL/RPM-GPG-KEYredhat-release        
+
