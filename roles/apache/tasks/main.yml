@@ -1,0 +1,27 @@
+---
+ - name: package installtion
+   ansible.builtin.yum:
+       name:
+         - httpd
+         - firewalld
+       state: present
+ - name: enable service
+   ansible.builtin.service:
+     name: "{{item}}"
+     state: started
+     enabled: true
+   loop:
+    - httpd
+    - firewalld
+ - name: add http to firewalld
+   ansible.posix.firewalld:
+      service: http
+      state: enabled
+      permanent: true
+      immediate: true
+ - name: j2 file run
+   ansible.builtin.template:
+     src: index.html.j2
+     dest: /var/www/html/index.html
+   notify:
+     restart httpd    

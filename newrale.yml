@@ -1,0 +1,6 @@
+---
+ - name: name run new apche
+   hosts: webserver
+   become: true
+   roles:
+     - apache  
